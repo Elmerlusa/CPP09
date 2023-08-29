@@ -1,3 +1,7 @@
+bitcoin
+rpn
+merge
+
 # Prerequisites
 *.d
 
@@ -30,3 +34,5 @@
 *.exe
 *.out
 *.app
+
+*.json
