@@ -1,4 +1,4 @@
-NAME = bitcoin
+NAME = btc
 
 CPP = c++
 FLAGS = -Wall -Wextra -Werror -std=c++98
@@ -8,12 +8,16 @@ CPPO = ${CPPF:.cpp=.o}
 
 RM = rm -rf
 ########################################################
-.PHONY: all test re fclean clean
+.PHONY: all test error re fclean clean
 ########################################################
 all:		${NAME}
 
 test:		${NAME}
+		./${NAME} data.csv
+
+error:		${NAME}
 		./${NAME}
+		./${NAME} a
 
 ${NAME}:	${CPPO}
 		@${CPP} ${FLAGS} ${CPPO} -o ${NAME}
