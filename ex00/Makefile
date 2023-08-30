@@ -13,7 +13,7 @@ RM = rm -rf
 all:		${NAME}
 
 test:		${NAME}
-		./${NAME} data.csv
+		./${NAME} input.txt
 
 error:		${NAME}
 		./${NAME}
