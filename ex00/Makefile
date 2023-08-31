@@ -13,11 +13,12 @@ RM = rm -rf
 all:		${NAME}
 
 test:		${NAME}
-		./${NAME} input.txt
+		./${NAME} ./dbs/input.txt
 
 error:		${NAME}
 		./${NAME}
 		./${NAME} a
+		./${NAME} a b
 
 ${NAME}:	${CPPO}
 		@${CPP} ${FLAGS} ${CPPO} -o ${NAME}

@@ -6,6 +6,8 @@
 #include <iostream>
 #include <algorithm>
 
+#define RATE_DB_FILENAME "./dbs/oneline.csv"
+
 class	BitcoinExchange
 {
 	private:
@@ -15,16 +17,16 @@ class	BitcoinExchange
 
 		void	readRateFilename(void);
 		void	processValueFilename(void);
-		void	calculateResult(std::string date, float value);
+		void	calculateResult(const std::string& date, const float value);
 		float	getClosestRate(std::pair<std::string, float> p);
 
-		bool	validateRateDBLine(std::string line);
-		bool	validateValueDBLine(std::string line);
-		bool	validateDate(std::string date);
-		bool	validateMonthAndDay(std::string month, std::string day);
+		void	validateRateDBLine(const std::string& line);
+		void	validateValueDBLine(const std::string& line);
+		bool	validateDate(const std::string& date);
+		bool	validateMonthAndDay(const std::string& month, const std::string& day);
 		bool	validateNumber(std::string rate);
 
-		bool	isDigitString(std::string str);
+		bool	isDigitString(const std::string& str);
 	public:
 		BitcoinExchange(std::string valueFilename);
 		~BitcoinExchange(void);
