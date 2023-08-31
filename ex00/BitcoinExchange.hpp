@@ -6,7 +6,7 @@
 #include <iostream>
 #include <algorithm>
 
-#define RATE_DB_FILENAME "./dbs/oneline.csv"
+#define RATE_DB_FILENAME "./dbs/data.csv"
 
 class	BitcoinExchange
 {

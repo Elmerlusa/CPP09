@@ -21,7 +21,6 @@ void	BitcoinExchange::readRateFilename(void)
 	{
 		std::size_t	sep;
 
-		std::cout << "->" << line << std::endl;
 		this->validateRateDBLine(line);
 		sep = line.find(',');
 		this->dateAndRate.insert(std::pair<std::string, float>(line.substr(0, sep), atof(line.substr(sep + 1).c_str())));
@@ -44,9 +43,6 @@ void	BitcoinExchange::processValueFilename(void)
 		{
 			this->validateValueDBLine(line);
 			this->calculateResult(line.substr(0, line.find(' ')), atof(line.substr(line.rfind(' ')).c_str()));
-			std::map<std::string, float>::iterator	it = this->dateAndRate.begin();
-			for (; it != this->dateAndRate.end(); it++)
-				std::cout << "map entry:" << it->first << ", " << it->second << std::endl;
 		}
 		catch (const std::exception& e)
 		{
@@ -77,21 +73,32 @@ float	BitcoinExchange::getClosestRate(std::pair<std::string, float> p)
 	std::map<std::string, float>::iterator	itNext;
 	int										gapToPrevDate;
 	int										gapToNextDate;
+	float									rate;
 
 	this->dateAndRate.insert(p);
 	it = this->dateAndRate.find(p.first);
 	if (it == this->dateAndRate.begin())
-		return (++it)->second;
+	{
+		rate = (++it)->second;
+		it--;
+	}
 	else if (it == --this->dateAndRate.end())
-		return (--it)->second;
-	itNext = it;
-	itNext++;
-	itPrev = it;
-	itPrev--;
+	{
+		rate = (--it)->second;
+		it++;
+	}
+	else
+	{
+		itNext = it;
+		itNext++;
+		itPrev = it;
+		itPrev--;
+		gapToPrevDate = std::abs(p.first.compare(itPrev->first));
+		gapToNextDate = std::abs(p.first.compare(itNext->first));
+		rate = gapToPrevDate < gapToNextDate ? itPrev->second : itNext->second;
+	}
 	this->dateAndRate.erase(it);
-	gapToPrevDate = std::abs(p.first.compare(itPrev->first));
-	gapToNextDate = std::abs(p.first.compare(itNext->first));
-	return gapToPrevDate < gapToNextDate ? itPrev->second : itNext->second;
+	return rate;
 }
 
 void	BitcoinExchange::validateRateDBLine(const std::string& line)
