@@ -13,7 +13,31 @@ RM = rm -rf
 all:		${NAME}
 
 test:		${NAME}
+		@echo -----ERROR-----
 		./${NAME}
+		./${NAME} "1 2 +" "1 2 +"ç
+		./${NAME} "(1 + 1)"
+		./${NAME} "(1 1 +)"
+		./${NAME} "1 + 1"
+		./${NAME} "+ 1 1"
+		./${NAME} "1 10 +"
+		./${NAME} "1 -9 +"
+		@echo -----SUCCESS-----
+		@echo -n 0-\>
+		./${NAME} "1 2 * 2 / 2 * 2 4 - +"
+		@echo -n 42-\>
+		./${NAME} "8 9 * 9 - 9 - 9 - 4 - 1 +"
+		@echo -n 42-\>
+		./${NAME} "7 7 * 7 -"
+		@echo -n 0-\>
+		./${NAME} "1 2 * 2 / 2 * 2 4 - + 0 *"
+		@echo -n 40-\>
+		./${NAME} "3 5 + 7 2 - *"
+		@echo -n 10-\>
+		./${NAME} "5 6 2 4 + 1 * / * 3 + 2 +"
+		@echo -n 3-\>
+		./${NAME} "1 6 3 / +"
+		
 
 ${NAME}:	${CPPO}
 		@${CPP} ${FLAGS} ${CPPO} -o ${NAME}
