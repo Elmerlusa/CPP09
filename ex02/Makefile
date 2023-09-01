@@ -1,4 +1,16 @@
-NAME = merge
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: javmarti <javmarti@student.42madrid.com    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/09/01 11:37:28 by javmarti          #+#    #+#              #
+#    Updated: 2023/09/01 11:40:33 by javmarti         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+NAME = PmergeMe
 
 CPP = c++
 FLAGS = -Wall -Wextra -Werror -std=c++98
@@ -13,7 +25,7 @@ RM = rm -rf
 all:		${NAME}
 
 test:		${NAME}
-		./${NAME}
+		./${NAME} `shuf -i 1-100 -n 10 | tr "\n" " "`
 
 ${NAME}:	${CPPO}
 		@${CPP} ${FLAGS} ${CPPO} -o ${NAME}
