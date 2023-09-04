@@ -14,19 +14,43 @@
 
 #include <iostream>
 #include <vector>
-#include <sstream>
+#include <deque>
 #include <stdexcept>
 #include <algorithm>
+#include <ctime>
+#include <iomanip>
 
 class	PmergeMe
 {
 	private:
-		std::vector<unsigned int>	v;
+		char**				seq;
+		std::vector<int>	v;
+		double				vTime;
+		std::deque<int>		d;
+		double				dTime;
 
 		void	parseArgsToV(char *cSeq[], int size);
+		void	vSort(char *cSeq[], int size);
+		void	vInsertionSort(std::vector<int>& v);
+
+		void	parseArgsToD(char *cSeq[], int size);
+		void	dSort(char *cSeq[], int size);
+		void	dInsertionSort(std::deque<int>& v);
+
+		void	printResults(void);
+
+		template<class InputIt> bool	isSorted(InputIt begin, InputIt end)
+		{
+			end--;
+			while (begin != end)
+			{
+				if (*begin > *(begin + 1))
+					return false;
+				begin++;
+			}
+			return true;
+		}
 	public:
 		PmergeMe(char *cSeq[], int size);
 		PmergeMe(void);
-
-		static void	validateNumber(const std::string& num);
 };
