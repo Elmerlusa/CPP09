@@ -20,6 +20,8 @@
 #include <ctime>
 #include <iomanip>
 
+#define SORT_TRESHOLD 12
+
 class	PmergeMe
 {
 	private:
@@ -31,11 +33,13 @@ class	PmergeMe
 
 		void	parseArgsToV(char *cSeq[], int size);
 		void	vSort(char *cSeq[], int size);
-		void	vInsertionSort(std::vector<int>& v);
+		void	vInsertionSort(std::vector<int>& v, size_t begin, size_t end);
+		void	vMergeSort(std::vector<int>& v, size_t begin, size_t end);
 
 		void	parseArgsToD(char *cSeq[], int size);
 		void	dSort(char *cSeq[], int size);
-		void	dInsertionSort(std::deque<int>& v);
+		void	dInsertionSort(std::deque<int>& d, size_t begin, size_t end);
+		void	dMergeSort(std::deque<int>& d, size_t begin, size_t end);
 
 		void	printResults(void);
 

@@ -25,7 +25,20 @@ RM = rm -rf
 all:		${NAME}
 
 test:		${NAME}
+		./${NAME}
+		./${NAME} a
+		./${NAME} 1+
+		./${NAME} "-1" "2"
+		./${NAME} 1
+		./${NAME} 0 0 1
+		./${NAME} 1 2 3 4 3 3 7
+		./${NAME} 0 2
+		./${NAME} 1 2 3 4 5 6 7 8 9
 		./${NAME} `shuf -i 1-100 -n 10 | tr "\n" " "`
+		@read a
+		./${NAME} `shuf -i 1-100000 -n 3000 | tr "\n" " "`
+		@read b
+		./${NAME} `shuf -i 1-100000 -n 5000 | tr "\n" " "`
 
 ${NAME}:	${CPPO}
 		@${CPP} ${FLAGS} ${CPPO} -o ${NAME}

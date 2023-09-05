@@ -35,7 +35,7 @@ void	PmergeMe::parseArgsToV(char *cSeq[], int size)
 		std::string	numDigits = (*it)[0] == '+' ? (*it).substr(1) : *it;
 
 		if (numDigits.find_first_not_of("0123456789") != std::string::npos)
-			throw std::runtime_error("Input error");
+			throw std::runtime_error("Error: Wrong input");
 		else
 			this->v.push_back(atoi((*it).c_str()));
 	}
@@ -48,28 +48,60 @@ void	PmergeMe::vSort(char *cSeq[], int size)
 	clock_gettime(CLOCK_REALTIME, &begin);
 	this->v.reserve(size);
 	this->parseArgsToV(cSeq, size);
-	this->vInsertionSort(this->v);
+	this->vMergeSort(this->v, 0, v.size() - 1);
 	clock_gettime(CLOCK_REALTIME, &end);
-	this->vTime = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) * 1e-9;
+	this->vTime = (end.tv_sec - begin.tv_sec) * 1e+3 + (end.tv_nsec - begin.tv_nsec) * 1e-6;
 }
 
-void	PmergeMe::vInsertionSort(std::vector<int>& v)
+void	PmergeMe::vInsertionSort(std::vector<int>& v, size_t begin, size_t end)
 {
-	int	aux, tmp;
+	size_t	aux;
+	int		tmp;
 
-	for (std::size_t i = 0; i < v.size() - 1; i++)
+	if (begin == end)
+		return ;
+	for (std::size_t i = begin; i <= end - 1; i++)
 	{
 		if (v[i] < v[i + 1])
 			continue ;
 		aux = i + 1;
-		while (aux > 0)
+		tmp = v[i + 1];
+		while (aux > begin && tmp < v[aux - 1])
 		{
-			if (v[aux] > v[aux - 1])
-				break ;
-			tmp = v[aux];
 			v[aux] = v[aux - 1];
-			v[aux - 1] = tmp;
 			aux--;
+		}
+		v[aux] = tmp;
+	}
+}
+
+void	PmergeMe::vMergeSort(std::vector<int>& v, size_t begin, size_t end)
+{
+	if (end - begin <= SORT_TRESHOLD)
+		this->vInsertionSort(v, begin, end);
+	else
+	{
+		size_t	mid = (begin + end) / 2;
+
+		this->vMergeSort(v, begin, mid);
+		this->vMergeSort(v, mid + 1, end);
+
+		std::vector<int>	aux(v);
+		size_t				i1 = begin;
+		size_t				i2 = mid + 1;
+
+		for (size_t i = begin; i <= end; i++)
+		{
+			if (i1 <= mid && (i2 > end || aux[i1] < aux[i2]))
+			{
+				v[i] = aux[i1];
+				i1++;
+			}
+			else
+			{
+				v[i] = aux[i2];
+				i2++;
+			}
 		}
 	}
 }
@@ -80,9 +112,9 @@ void	PmergeMe::dSort(char *cSeq[], int size)
 
 	clock_gettime(CLOCK_REALTIME, &begin);
 	this->parseArgsToD(cSeq, size);
-	this->dInsertionSort(this->d);
+	this->dMergeSort(this->d, 0, d.size() - 1);
 	clock_gettime(CLOCK_REALTIME, &end);
-	this->dTime = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) * 1e-9;
+	this->dTime = (end.tv_sec - begin.tv_sec) * 1e+3 + (end.tv_nsec - begin.tv_nsec) * 1e-6;
 }
 
 void	PmergeMe::parseArgsToD(char *cSeq[], int size)
@@ -94,41 +126,73 @@ void	PmergeMe::parseArgsToD(char *cSeq[], int size)
 		std::string	numDigits = (*it)[0] == '+' ? (*it).substr(1) : *it;
 
 		if (numDigits.find_first_not_of("0123456789") != std::string::npos)
-			throw std::runtime_error("Input error");
+			throw std::runtime_error("Error: Wrong input");
 		else
 			this->d.push_back(atoi((*it).c_str()));
 	}
 }
 
-void	PmergeMe::dInsertionSort(std::deque<int>& d)
+void	PmergeMe::dInsertionSort(std::deque<int>& d, size_t begin, size_t end)
 {
-	int	aux, tmp;
+	size_t	aux;
+	int		tmp;
 
-	for (std::size_t i = 0; i < v.size() - 1; i++)
+	if (begin == end)
+		return ;
+	for (std::size_t i = begin; i <= end - 1; i++)
 	{
 		if (d[i] < d[i + 1])
 			continue ;
 		aux = i + 1;
-		while (aux > 0)
+		tmp = d[i + 1];
+		while (aux > begin && tmp < d[aux - 1])
 		{
-			if (d[aux] > d[aux - 1])
-				break ;
-			tmp = d[aux];
 			d[aux] = d[aux - 1];
-			d[aux - 1] = tmp;
 			aux--;
+		}
+		d[aux] = tmp;
+	}
+}
+
+void	PmergeMe::dMergeSort(std::deque<int>& d, size_t begin, size_t end)
+{
+	if (end - begin <= SORT_TRESHOLD)
+		this->dInsertionSort(d, begin, end);
+	else
+	{
+		size_t	mid = (begin + end) / 2;
+
+		this->dMergeSort(d, begin, mid);
+		this->dMergeSort(d, mid + 1, end);
+
+		std::deque<int>	aux(d);
+		size_t			i1 = begin;
+		size_t			i2 = mid + 1;
+
+		for (size_t i = begin; i <= end; i++)
+		{
+			if (i1 <= mid && (i2 > end || aux[i1] < aux[i2]))
+			{
+				d[i] = aux[i1];
+				i1++;
+			}
+			else
+			{
+				d[i] = aux[i2];
+				i2++;
+			}
 		}
 	}
 }
 
 void	PmergeMe::printResults(void)
 {
-	std::cout << std::fixed << std::setprecision(7) << "Before:\t";
+	std::cout << std::fixed << std::setprecision(6) << "Before:\t";
 	for (std::size_t i = 0; this->seq[i]; i++)
 		std::cout << this->seq[i] << " ";
 	std::cout << "\nAfter:\t";
 	for (std::vector<int>::iterator it = this->v.begin(); it != this->v.end(); it++)
 		std::cout << *it << " ";
-	std::cout << "\nTime to process a range of " << this->v.size() << " elements with std::vector<int>:\t" << this->vTime << " us\n";
-	std::cout << "Time to process a range of " << this->d.size() << " elements with std::deque<int>:\t" << this->dTime << " us\n";
+	std::cout << "\nTime to process a range of " << this->v.size() << " elements with std::vector<int>:\t" << this->vTime << " ms\n";
+	std::cout << "Time to process a range of " << this->d.size() << " elements with std::deque<int>:\t" << this->dTime << " ms\n";
 }
