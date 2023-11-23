@@ -23,9 +23,13 @@
 class	BitcoinExchange
 {
 	private:
-		std::string						rateFilename;
-		std::string						valueFilename;
-		std::map<std::string, float>	dateAndRate;
+		std::string						_rateFilename;
+		std::string						_valueFilename;
+		std::map<std::string, float>	_dateAndRateMap;
+
+		const std::string&					getRateFilename(void) const;
+		const std::string&					getValueFilename(void) const;
+		const std::map<std::string, float>	getDateAndRateMap(void) const;
 
 		void	readRateFilename(void);
 		void	processValueFilename(void);
@@ -40,6 +44,9 @@ class	BitcoinExchange
 
 		bool	isDigitString(const std::string& str);
 	public:
-		BitcoinExchange(std::string valueFilename);
+		BitcoinExchange(const BitcoinExchange& bitcoinExchange);
+		BitcoinExchange(const std::string& valueFilename);
 		~BitcoinExchange(void);
+
+		BitcoinExchange&	operator=(const BitcoinExchange& bitcoinExchange);
 };

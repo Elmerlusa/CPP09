@@ -12,22 +12,44 @@
 
 #include "BitcoinExchange.hpp"
 
-BitcoinExchange::BitcoinExchange(std::string valueFilename):
-	rateFilename(RATE_DB_FILENAME), valueFilename(valueFilename)
+BitcoinExchange::BitcoinExchange(const BitcoinExchange& bitcoinExchange):
+	_rateFilename(bitcoinExchange.getRateFilename()), _valueFilename(bitcoinExchange.getValueFilename()),
+	_dateAndRateMap(std::map<std::string, float>(bitcoinExchange.getDateAndRateMap()))
+{
+}
+
+BitcoinExchange::BitcoinExchange(const std::string& valueFilename): _rateFilename(RATE_DB_FILENAME), _valueFilename(valueFilename)
 {
 	this->readRateFilename();
 	this->processValueFilename();
 }
 
-BitcoinExchange::~BitcoinExchange(void) {}
+BitcoinExchange::~BitcoinExchange(void)
+{
+}
+
+const std::string&	BitcoinExchange::getRateFilename(void) const
+{
+	return this->_rateFilename;
+}
+
+const std::string&	BitcoinExchange::getValueFilename(void) const
+{
+	return this->_valueFilename;
+}
+
+const std::map<std::string, float>	BitcoinExchange::getDateAndRateMap(void) const
+{
+	return this->_dateAndRateMap;
+}
 
 void	BitcoinExchange::readRateFilename(void)
 {
-	std::ifstream	ifs(this->rateFilename.c_str());
+	std::ifstream	ifs(this->_rateFilename.c_str());
 	std::string		line;
 
 	if (ifs.is_open() == false)
-		throw std::runtime_error(this->rateFilename + " not found");
+		throw std::runtime_error(this->_rateFilename + " not found");
 	ifs >> line;
 	while (ifs >> line)
 	{
@@ -35,19 +57,19 @@ void	BitcoinExchange::readRateFilename(void)
 
 		this->validateRateDBLine(line);
 		sep = line.find(',');
-		this->dateAndRate.insert(std::pair<std::string, float>(line.substr(0, sep), atof(line.substr(sep + 1).c_str())));
+		this->_dateAndRateMap.insert(std::pair<std::string, float>(line.substr(0, sep), atof(line.substr(sep + 1).c_str())));
 	}
-	if (this->dateAndRate.size() == 0)
-		throw std::runtime_error(this->rateFilename + " is empty");
+	if (this->_dateAndRateMap.size() == 0)
+		throw std::runtime_error(this->_rateFilename + " is empty");
 }
 
 void	BitcoinExchange::processValueFilename(void)
 {
-	std::ifstream	ifs(this->valueFilename.c_str());
+	std::ifstream	ifs(this->_valueFilename.c_str());
 	std::string		line;
 
 	if (ifs.is_open() == false)
-		throw std::runtime_error(this->valueFilename + " not found");
+		throw std::runtime_error(this->_valueFilename + " not found");
 	std::getline(ifs, line);
 	while (std::getline(ifs, line))
 	{
@@ -65,10 +87,10 @@ void	BitcoinExchange::processValueFilename(void)
 
 void	BitcoinExchange::calculateResult(const std::string& date, const float value)
 {
-	std::map<std::string, float>::iterator	it = this->dateAndRate.find(date);
+	std::map<std::string, float>::iterator	it = this->_dateAndRateMap.find(date);
 	float									result;
 
-	if (it == this->dateAndRate.end())
+	if (it == this->_dateAndRateMap.end())
 		result = value * this->getClosestRate(std::pair<std::string, float>(date, value));
 	else
 		result = value * it->second;
@@ -87,14 +109,14 @@ float	BitcoinExchange::getClosestRate(std::pair<std::string, float> p)
 	int										gapToNextDate;
 	float									rate;
 
-	this->dateAndRate.insert(p);
-	it = this->dateAndRate.find(p.first);
-	if (it == this->dateAndRate.begin())
+	this->_dateAndRateMap.insert(p);
+	it = this->_dateAndRateMap.find(p.first);
+	if (it == this->_dateAndRateMap.begin())
 	{
 		rate = (++it)->second;
 		it--;
 	}
-	else if (it == --this->dateAndRate.end())
+	else if (it == --this->_dateAndRateMap.end())
 	{
 		rate = (--it)->second;
 		it++;
@@ -109,7 +131,7 @@ float	BitcoinExchange::getClosestRate(std::pair<std::string, float> p)
 		gapToNextDate = std::abs(p.first.compare(itNext->first));
 		rate = gapToPrevDate < gapToNextDate ? itPrev->second : itNext->second;
 	}
-	this->dateAndRate.erase(it);
+	this->_dateAndRateMap.erase(it);
 	return rate;
 }
 
@@ -184,4 +206,15 @@ bool	BitcoinExchange::validateNumber(std::string rate)
 bool	BitcoinExchange::isDigitString(const std::string& str)
 {
 	return str.find_first_not_of("0123456789") == std::string::npos;
+}
+
+BitcoinExchange&	BitcoinExchange::operator=(const BitcoinExchange& bitcoinExchange)
+{
+	if (this != &bitcoinExchange)
+	{
+		this->_rateFilename = bitcoinExchange.getRateFilename();
+		this->_valueFilename = bitcoinExchange.getValueFilename();
+		this->_dateAndRateMap = std::map<std::string, float>(bitcoinExchange.getDateAndRateMap());
+	}
+	return *this;
 }

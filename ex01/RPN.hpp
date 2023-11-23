@@ -24,6 +24,9 @@ class	RPN
 		void	calculateRPN(const std::string& rpn);
 		void	doOperation(std::stack<int>& s, char op);
 	public:
-		RPN(std::string args);
+		RPN(const RPN& rpn);
+		RPN(const std::string& args);
 		~RPN(void);
+
+		RPN&	operator=(const RPN& rpn);
 };

@@ -25,23 +25,27 @@
 class	PmergeMe
 {
 	private:
-		char**				seq;
-		std::vector<int>	v;
-		double				vTime;
-		std::deque<int>		d;
-		double				dTime;
+		std::vector<int>	_v;
+		double				_vTime;
+		std::deque<int>		_d;
+		double				_dTime;
 
-		void	parseArgsToV(char *cSeq[], int size);
-		void	vSort(char *cSeq[], int size);
-		void	vInsertionSort(std::vector<int>& v, size_t begin, size_t end);
-		void	vMergeSort(std::vector<int>& v, size_t begin, size_t end);
+		const std::vector<int>&	getV(void) const;
+		const double&			getVTime(void) const;
+		const std::deque<int>&	getD(void) const;
+		const double&			getDTime(void) const;
 
-		void	parseArgsToD(char *cSeq[], int size);
-		void	dSort(char *cSeq[], int size);
-		void	dInsertionSort(std::deque<int>& d, size_t begin, size_t end);
-		void	dMergeSort(std::deque<int>& d, size_t begin, size_t end);
+		void	parseArgsToV(char *cSeq[], const int& size);
+		void	vSort(char *cSeq[], const int& size);
+		void	vInsertionSort(std::vector<int>& v, const size_t& begin, const size_t& end);
+		void	vMergeSort(std::vector<int>& v, const size_t& begin, const size_t& end);
 
-		void	printResults(void);
+		void	parseArgsToD(char *cSeq[], const int& size);
+		void	dSort(char *cSeq[], const int& size);
+		void	dInsertionSort(std::deque<int>& d, const size_t& begin, const size_t& end);
+		void	dMergeSort(std::deque<int>& d, const size_t& begin, const size_t& end);
+
+		void	printResults(char **cSeq);
 
 		template<class InputIt> bool	isSorted(InputIt begin, InputIt end)
 		{
@@ -55,6 +59,9 @@ class	PmergeMe
 			return true;
 		}
 	public:
-		PmergeMe(char *cSeq[], int size);
+		PmergeMe(const PmergeMe& pmergeMe);
+		PmergeMe(char *cSeq[], const int& size);
 		PmergeMe(void);
+
+		PmergeMe&	operator=(const PmergeMe& pmergeMe);
 };

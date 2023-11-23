@@ -12,21 +12,47 @@
 
 #include "PmergeMe.hpp"
 
-PmergeMe::PmergeMe(char *cSeq[], int size)
+PmergeMe::PmergeMe(const PmergeMe& pmergeMe): _v(std::vector<int>(pmergeMe.getV())), _vTime(pmergeMe.getVTime()),
+	_d(std::deque<int>(pmergeMe.getD())), _dTime(pmergeMe.getDTime())
 {
-	this->seq = cSeq;
-	this->vSort(cSeq, size);
-	this->dSort(cSeq, size);
-	if (this->isSorted(this->v.begin(), this->v.end()) == false
-		|| std::equal(this->v.begin(), this->v.end(), this->d.begin()) == false)
-		throw std::runtime_error("Error");
-	else
-		this->printResults();
 }
 
-PmergeMe::PmergeMe(void) {}
+PmergeMe::PmergeMe(char *cSeq[], const int& size)
+{
+	this->vSort(cSeq, size);
+	this->dSort(cSeq, size);
+	if (this->isSorted(this->_v.begin(), this->_v.end()) == false
+		|| std::equal(this->_v.begin(), this->_v.end(), this->_d.begin()) == false)
+		throw std::runtime_error("Error");
+	else
+		this->printResults(cSeq);
+}
 
-void	PmergeMe::parseArgsToV(char *cSeq[], int size)
+PmergeMe::PmergeMe(void)
+{
+}
+
+const std::vector<int>&	PmergeMe::getV(void) const
+{
+	return this->_v;
+}
+
+const double&	PmergeMe::getVTime(void) const
+{
+	return this->_vTime;
+}
+
+const std::deque<int>&	PmergeMe::getD(void) const
+{
+	return this->_d;
+}
+
+const double&	PmergeMe::getDTime(void) const
+{
+	return this->_dTime;
+}
+
+void	PmergeMe::parseArgsToV(char *cSeq[], const int& size)
 {
 	std::vector<std::string>	seq(cSeq, cSeq + size);
 
@@ -37,23 +63,23 @@ void	PmergeMe::parseArgsToV(char *cSeq[], int size)
 		if (numDigits.find_first_not_of("0123456789") != std::string::npos)
 			throw std::runtime_error("Error: Wrong input");
 		else
-			this->v.push_back(atoi((*it).c_str()));
+			this->_v.push_back(atoi((*it).c_str()));
 	}
 }
 
-void	PmergeMe::vSort(char *cSeq[], int size)
+void	PmergeMe::vSort(char *cSeq[], const int& size)
 {
 	struct timespec	begin, end;
 
 	clock_gettime(CLOCK_REALTIME, &begin);
-	this->v.reserve(size);
+	this->_v.reserve(size);
 	this->parseArgsToV(cSeq, size);
-	this->vMergeSort(this->v, 0, v.size() - 1);
+	this->vMergeSort(this->_v, 0, this->_v.size() - 1);
 	clock_gettime(CLOCK_REALTIME, &end);
-	this->vTime = (end.tv_sec - begin.tv_sec) * 1e+3 + (end.tv_nsec - begin.tv_nsec) * 1e-6;
+	this->_vTime = (end.tv_sec - begin.tv_sec) * 1e+3 + (end.tv_nsec - begin.tv_nsec) * 1e-6;
 }
 
-void	PmergeMe::vInsertionSort(std::vector<int>& v, size_t begin, size_t end)
+void	PmergeMe::vInsertionSort(std::vector<int>& v, const size_t& begin, const size_t& end)
 {
 	size_t	aux;
 	int		tmp;
@@ -75,7 +101,7 @@ void	PmergeMe::vInsertionSort(std::vector<int>& v, size_t begin, size_t end)
 	}
 }
 
-void	PmergeMe::vMergeSort(std::vector<int>& v, size_t begin, size_t end)
+void	PmergeMe::vMergeSort(std::vector<int>& v, const size_t& begin, const size_t& end)
 {
 	if (end - begin <= SORT_TRESHOLD)
 		this->vInsertionSort(v, begin, end);
@@ -106,18 +132,18 @@ void	PmergeMe::vMergeSort(std::vector<int>& v, size_t begin, size_t end)
 	}
 }
 
-void	PmergeMe::dSort(char *cSeq[], int size)
+void	PmergeMe::dSort(char *cSeq[], const int& size)
 {
 	struct timespec	begin, end;
 
 	clock_gettime(CLOCK_REALTIME, &begin);
 	this->parseArgsToD(cSeq, size);
-	this->dMergeSort(this->d, 0, d.size() - 1);
+	this->dMergeSort(this->_d, 0, this->_d.size() - 1);
 	clock_gettime(CLOCK_REALTIME, &end);
-	this->dTime = (end.tv_sec - begin.tv_sec) * 1e+3 + (end.tv_nsec - begin.tv_nsec) * 1e-6;
+	this->_dTime = (end.tv_sec - begin.tv_sec) * 1e+3 + (end.tv_nsec - begin.tv_nsec) * 1e-6;
 }
 
-void	PmergeMe::parseArgsToD(char *cSeq[], int size)
+void	PmergeMe::parseArgsToD(char *cSeq[], const int& size)
 {
 	std::deque<std::string>	seq(cSeq, cSeq + size);
 
@@ -128,11 +154,11 @@ void	PmergeMe::parseArgsToD(char *cSeq[], int size)
 		if (numDigits.find_first_not_of("0123456789") != std::string::npos)
 			throw std::runtime_error("Error: Wrong input");
 		else
-			this->d.push_back(atoi((*it).c_str()));
+			this->_d.push_back(atoi((*it).c_str()));
 	}
 }
 
-void	PmergeMe::dInsertionSort(std::deque<int>& d, size_t begin, size_t end)
+void	PmergeMe::dInsertionSort(std::deque<int>& d, const size_t& begin, const size_t& end)
 {
 	size_t	aux;
 	int		tmp;
@@ -154,7 +180,7 @@ void	PmergeMe::dInsertionSort(std::deque<int>& d, size_t begin, size_t end)
 	}
 }
 
-void	PmergeMe::dMergeSort(std::deque<int>& d, size_t begin, size_t end)
+void	PmergeMe::dMergeSort(std::deque<int>& d, const size_t& begin, const size_t& end)
 {
 	if (end - begin <= SORT_TRESHOLD)
 		this->dInsertionSort(d, begin, end);
@@ -185,14 +211,26 @@ void	PmergeMe::dMergeSort(std::deque<int>& d, size_t begin, size_t end)
 	}
 }
 
-void	PmergeMe::printResults(void)
+void	PmergeMe::printResults(char **cSeq)
 {
 	std::cout << std::fixed << std::setprecision(6) << "Before:\t";
-	for (std::size_t i = 0; this->seq[i]; i++)
-		std::cout << this->seq[i] << " ";
+	for (std::size_t i = 0; cSeq[i]; i++)
+		std::cout << cSeq[i] << " ";
 	std::cout << "\nAfter:\t";
-	for (std::vector<int>::iterator it = this->v.begin(); it != this->v.end(); it++)
+	for (std::vector<int>::iterator it = this->_v.begin(); it != this->_v.end(); it++)
 		std::cout << *it << " ";
-	std::cout << "\nTime to process a range of " << this->v.size() << " elements with std::vector<int>:\t" << this->vTime << " ms\n";
-	std::cout << "Time to process a range of " << this->d.size() << " elements with std::deque<int>:\t" << this->dTime << " ms\n";
+	std::cout << "\nTime to process a range of " << this->_v.size() << " elements with std::vector<int>:\t" << this->_vTime << " ms\n";
+	std::cout << "Time to process a range of " << this->_d.size() << " elements with std::deque<int>:\t" << this->_dTime << " ms\n";
+}
+
+PmergeMe&	PmergeMe::operator=(const PmergeMe& pmergeMe)
+{
+	if (this != &pmergeMe)
+	{
+		this->_v = std::vector<int>(pmergeMe.getV());
+		this->_vTime = pmergeMe.getVTime();
+		this->_d = std::deque<int>(pmergeMe.getD());
+		this->_dTime = pmergeMe.getDTime();
+	}
+	return *this;
 }

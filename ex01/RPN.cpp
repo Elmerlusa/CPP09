@@ -12,12 +12,19 @@
 
 #include "RPN.hpp"
 
-RPN::RPN(std::string rpn)
+RPN::RPN(const RPN& rpn)
+{
+	(void) rpn;
+}
+
+RPN::RPN(const std::string& rpn)
 {
 	this->calculateRPN(rpn);
 }
 
-RPN::~RPN(void) {}
+RPN::~RPN(void)
+{
+}
 
 void	RPN::calculateRPN(const std::string& rpn)
 {
@@ -67,4 +74,10 @@ void	RPN::doOperation(std::stack<int>& s, char op)
 		case '*':
 			s.push(firstOperand * secondOperand);
 	}
+}
+
+RPN&	RPN::operator=(const RPN& rpn)
+{
+	(void) rpn;
+	return *this;
 }
