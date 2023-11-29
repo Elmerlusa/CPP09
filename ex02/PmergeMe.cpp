@@ -12,6 +12,10 @@
 
 #include "PmergeMe.hpp"
 
+PmergeMe::PmergeMe(void): _v(std::vector<int>()), _vTime(0), _d(std::deque<int>()), _dTime()
+{
+}
+
 PmergeMe::PmergeMe(const PmergeMe& pmergeMe): _v(std::vector<int>(pmergeMe.getV())), _vTime(pmergeMe.getVTime()),
 	_d(std::deque<int>(pmergeMe.getD())), _dTime(pmergeMe.getDTime())
 {
@@ -28,7 +32,7 @@ PmergeMe::PmergeMe(char *cSeq[], const int& size)
 		this->printResults(cSeq);
 }
 
-PmergeMe::PmergeMe(void)
+PmergeMe::~PmergeMe(void)
 {
 }
 

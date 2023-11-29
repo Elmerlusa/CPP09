@@ -30,6 +30,11 @@ class	PmergeMe
 		std::deque<int>		_d;
 		double				_dTime;
 
+		PmergeMe(void);
+		PmergeMe(const PmergeMe& pmergeMe);
+
+		PmergeMe&	operator=(const PmergeMe& pmergeMe);
+
 		const std::vector<int>&	getV(void) const;
 		const double&			getVTime(void) const;
 		const std::deque<int>&	getD(void) const;
@@ -59,9 +64,6 @@ class	PmergeMe
 			return true;
 		}
 	public:
-		PmergeMe(const PmergeMe& pmergeMe);
 		PmergeMe(char *cSeq[], const int& size);
-		PmergeMe(void);
-
-		PmergeMe&	operator=(const PmergeMe& pmergeMe);
+		~PmergeMe(void);
 };
