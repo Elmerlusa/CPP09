@@ -12,6 +12,10 @@
 
 #include "BitcoinExchange.hpp"
 
+BitcoinExchange::BitcoinExchange(void): _rateFilename(""), _valueFilename(""), _dateAndRateMap(std::map<std::string, float>())
+{
+}
+
 BitcoinExchange::BitcoinExchange(const BitcoinExchange& bitcoinExchange):
 	_rateFilename(bitcoinExchange.getRateFilename()), _valueFilename(bitcoinExchange.getValueFilename()),
 	_dateAndRateMap(std::map<std::string, float>(bitcoinExchange.getDateAndRateMap()))
@@ -51,6 +55,8 @@ void	BitcoinExchange::readRateFilename(void)
 	if (ifs.is_open() == false)
 		throw std::runtime_error(this->_rateFilename + " not found");
 	ifs >> line;
+	if (ifs.fail())
+		throw std::runtime_error(this->_rateFilename + " is empty");
 	while (ifs >> line)
 	{
 		std::size_t	sep;
@@ -71,6 +77,8 @@ void	BitcoinExchange::processValueFilename(void)
 	if (ifs.is_open() == false)
 		throw std::runtime_error(this->_valueFilename + " not found");
 	std::getline(ifs, line);
+	if (ifs.fail())
+		throw std::runtime_error(this->_valueFilename + " is empty");
 	while (std::getline(ifs, line))
 	{
 		try

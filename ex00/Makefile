@@ -31,6 +31,8 @@ error:		${NAME}
 		./${NAME}
 		./${NAME} a
 		./${NAME} a b
+		./${NAME} ./dbs/input_empty.txt
+		./${NAME} ./dbs/input_real_empty.txt
 
 ${NAME}:	${CPPO}
 		@${CPP} ${FLAGS} ${CPPO} -o ${NAME}
