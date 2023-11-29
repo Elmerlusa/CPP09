@@ -21,12 +21,15 @@
 class	RPN
 {
 	private:
-		void	calculateRPN(const std::string& rpn);
-		void	doOperation(std::stack<int>& s, char op);
-	public:
 		RPN(const RPN& rpn);
 		RPN(const std::string& args);
 		~RPN(void);
 
 		RPN&	operator=(const RPN& rpn);
+
+		static void	doOperation(std::stack<int>& s, char op);
+
+		virtual void	makeAbstract(void) const = 0;
+	public:
+		static void	calculateRPN(const std::string& rpn);
 };

@@ -20,7 +20,7 @@ int	main(int argc, char *argv[])
 	{
 		try
 		{
-			RPN	r(argv[1]);
+			RPN::calculateRPN(argv[1]);
 		}
 		catch(const std::exception& e)
 		{

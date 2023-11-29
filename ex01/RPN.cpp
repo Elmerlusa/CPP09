@@ -26,36 +26,13 @@ RPN::~RPN(void)
 {
 }
 
-void	RPN::calculateRPN(const std::string& rpn)
-{
-	std::stack<int>	s;
-	std::stringstream	ss(rpn);
-	char				c;
-	std::string			validOps = "+-/*";
-
-	while (ss >> c)
-	{
-		bool	isOperator = validOps.find(c) != std::string::npos;
-
-		if (ss.fail() || (std::isdigit(c) == false && isOperator == false))
-			throw std::runtime_error("Error");
-		if (isOperator)
-			this->doOperation(s, c);
-		else
-			s.push(c - '0');
-	}
-	if (s.size() != 1)
-		throw std::runtime_error("Error");
-	std::cout << s.top() << std::endl;
-}
-
 void	RPN::doOperation(std::stack<int>& s, char op)
 {
 	int	firstOperand;
 	int	secondOperand;
 
 	if (s.size() < 2)
-		throw std::runtime_error("Error");
+		throw std::runtime_error("Error: Wrong RPN");
 	secondOperand = s.top();
 	s.pop();
 	firstOperand = s.top();
@@ -69,11 +46,36 @@ void	RPN::doOperation(std::stack<int>& s, char op)
 			s.push(firstOperand - secondOperand);
 			break ;
 		case '/':
+			if (secondOperand == 0)
+				throw std::runtime_error("Error: Cannot divide by 0");
 			s.push(firstOperand / secondOperand);
 			break ;
 		case '*':
 			s.push(firstOperand * secondOperand);
 	}
+}
+
+void	RPN::calculateRPN(const std::string& rpn)
+{
+	std::stack<int>	s;
+	std::stringstream	ss(rpn);
+	char				c;
+	std::string			validOps = "+-/*";
+
+	while (ss >> c)
+	{
+		if (ss.fail())
+			throw std::runtime_error("Error");
+		if (std::isdigit(c) == false && validOps.find(c) == std::string::npos)
+			throw std::runtime_error("Error: Wrong RPN");
+		if (validOps.find(c) != std::string::npos)
+			RPN::doOperation(s, c);
+		else
+			s.push(c - '0');
+	}
+	if (s.size() != 1)
+		throw std::runtime_error("Error: Wrong RPN");
+	std::cout << s.top() << std::endl;
 }
 
 RPN&	RPN::operator=(const RPN& rpn)

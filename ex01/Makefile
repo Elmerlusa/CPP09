@@ -34,6 +34,7 @@ test:		${NAME}
 		./${NAME} "+ 1 1"
 		./${NAME} "1 10 +"
 		./${NAME} "1 -9 +"
+		./${NAME} "1 6 0 / +"
 		@echo -----SUCCESS-----
 		@echo -n 0-\>
 		./${NAME} "1 2 * 2 / 2 * 2 4 - +"
