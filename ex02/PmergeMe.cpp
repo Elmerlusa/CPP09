@@ -12,7 +12,7 @@
 
 #include "PmergeMe.hpp"
 
-PmergeMe::PmergeMe(void): _v(std::vector<int>()), _vTime(0), _d(std::deque<int>()), _dTime()
+PmergeMe::PmergeMe(void): _v(std::vector<int>()), _vTime(0), _d(std::deque<int>()), _dTime(0)
 {
 }
 

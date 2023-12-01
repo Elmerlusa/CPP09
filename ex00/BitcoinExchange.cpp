@@ -6,7 +6,7 @@
 /*   By: javmarti <javmarti@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 11:37:52 by javmarti          #+#    #+#             */
-/*   Updated: 2023/09/01 11:37:53 by javmarti         ###   ########.fr       */
+/*   Updated: 2023/12/01 11:24:43 by javmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,6 @@ float	BitcoinExchange::getClosestRate(std::pair<std::string, float> p)
 	std::map<std::string, float>::iterator	it;
 	std::map<std::string, float>::iterator	itPrev;
 	std::map<std::string, float>::iterator	itNext;
-	int										gapToPrevDate;
-	int										gapToNextDate;
 	float									rate;
 
 	this->_dateAndRateMap.insert(p);
@@ -124,20 +122,10 @@ float	BitcoinExchange::getClosestRate(std::pair<std::string, float> p)
 		rate = (++it)->second;
 		it--;
 	}
-	else if (it == --this->_dateAndRateMap.end())
+	else
 	{
 		rate = (--it)->second;
 		it++;
-	}
-	else
-	{
-		itNext = it;
-		itNext++;
-		itPrev = it;
-		itPrev--;
-		gapToPrevDate = std::abs(p.first.compare(itPrev->first));
-		gapToNextDate = std::abs(p.first.compare(itNext->first));
-		rate = gapToPrevDate < gapToNextDate ? itPrev->second : itNext->second;
 	}
 	this->_dateAndRateMap.erase(it);
 	return rate;
