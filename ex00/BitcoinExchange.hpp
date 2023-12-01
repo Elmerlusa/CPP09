@@ -6,7 +6,7 @@
 /*   By: javmarti <javmarti@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 11:37:54 by javmarti          #+#    #+#             */
-/*   Updated: 2023/09/01 11:37:55 by javmarti         ###   ########.fr       */
+/*   Updated: 2023/12/01 15:51:24 by javmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <iomanip>
+#include <cerrno>
 
 #define RATE_DB_FILENAME "./dbs/data.csv"
 
@@ -43,6 +45,7 @@ class	BitcoinExchange
 
 		void	validateRateDBLine(const std::string& line);
 		void	validateValueDBLine(const std::string& line);
+		bool	validateRange(const std::string& num);
 		bool	validateDate(const std::string& date);
 		bool	validateMonthAndDay(const std::string& month, const std::string& day);
 		bool	validateNumber(std::string rate);

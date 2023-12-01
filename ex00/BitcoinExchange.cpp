@@ -6,7 +6,7 @@
 /*   By: javmarti <javmarti@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 11:37:52 by javmarti          #+#    #+#             */
-/*   Updated: 2023/12/01 11:24:43 by javmarti         ###   ########.fr       */
+/*   Updated: 2023/12/01 15:49:06 by javmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ BitcoinExchange::BitcoinExchange(const BitcoinExchange& bitcoinExchange):
 
 BitcoinExchange::BitcoinExchange(const std::string& valueFilename): _rateFilename(RATE_DB_FILENAME), _valueFilename(valueFilename)
 {
+	std::cout << std::fixed << std::setprecision(2);
 	this->readRateFilename();
 	this->processValueFilename();
 }
@@ -102,10 +103,7 @@ void	BitcoinExchange::calculateResult(const std::string& date, const float value
 		result = value * this->getClosestRate(std::pair<std::string, float>(date, value));
 	else
 		result = value * it->second;
-	if (result >= 0 && result <= 1000)
-		std::cout << date << " => " << value << " = " << result << std::endl;
-	else
-		throw std::runtime_error("Error (result): too large a number");
+	std::cout << date << " => " << value << " = " << result << std::endl;
 }
 
 float	BitcoinExchange::getClosestRate(std::pair<std::string, float> p)
@@ -147,8 +145,15 @@ void	BitcoinExchange::validateValueDBLine(const std::string& line)
 		throw std::runtime_error("Error (value DB): Incorrect line format");
 	if (this->validateDate(line.substr(0, 10)) == false)
 		throw std::runtime_error("Error (value DB): Incorrect date format");
-	if (this->validateNumber(line.substr(13)) == false)
+	if (this->validateNumber(line.substr(13)) == false || this->validateRange(line.substr(13)) == false)
 		throw std::runtime_error("Error (value DB): Incorrect value format");
+}
+
+bool	BitcoinExchange::validateRange(const std::string& num)
+{
+	const float	fNum = strtof(num.c_str(), NULL);
+	
+	return errno != ERANGE && static_cast<float>(0) <= fNum && fNum <= static_cast<float>(1000);
 }
 
 bool	BitcoinExchange::validateDate(const std::string& date)
