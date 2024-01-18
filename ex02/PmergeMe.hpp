@@ -20,7 +20,7 @@
 #include <ctime>
 #include <iomanip>
 
-#define SORT_TRESHOLD 12
+#define SORT_TRESHOLD 1
 
 class	PmergeMe
 {
