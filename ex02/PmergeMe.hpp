@@ -20,8 +20,6 @@
 #include <ctime>
 #include <iomanip>
 
-#define SORT_TRESHOLD 1
-
 class	PmergeMe
 {
 	private:
@@ -42,8 +40,12 @@ class	PmergeMe
 
 		void	parseArgsToV(char *cSeq[], const int& size);
 		void	vSort(char *cSeq[], const int& size);
-		void	vInsertionSort(std::vector<int>& v, const size_t& begin, const size_t& end);
-		void	vMergeSort(std::vector<int>& v, const size_t& begin, const size_t& end);
+		void	swap(std::vector<int>& v, const size_t& i1, const size_t& i2);
+		std::vector<int>	vGroupLargestAndShortestValues(std::vector<int>& v, std::vector< std::vector<int> > &pairs);
+		void	insertShortestValues(std::vector<int>& v, const std::vector<int>& vAux);
+		std::vector< std::vector<int> >	vCreateAndSortPairs(std::vector<int>& v);
+		void	vRecursiveInsertionSort(std::vector< std::vector<int> >& v, int n);
+		void	vFordJohnsonSortAlgorithm(std::vector<int>& v);
 
 		void	parseArgsToD(char *cSeq[], const int& size);
 		void	dSort(char *cSeq[], const int& size);
@@ -51,6 +53,9 @@ class	PmergeMe
 		void	dMergeSort(std::deque<int>& d, const size_t& begin, const size_t& end);
 
 		void	printResults(char **cSeq);
+
+		int		getJacobsthalNum(const size_t& n);
+		std::vector<int>	getInsertOrder(const size_t& size);
 
 		template<class InputIt> bool	isSorted(InputIt begin, InputIt end)
 		{
