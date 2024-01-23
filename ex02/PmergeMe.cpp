@@ -148,12 +148,19 @@ void	PmergeMe::vGroupLargestAndShortestValues(vectorIntVector& pairs, intVector&
 void	PmergeMe::vInsertShortestValues(intVector& v, intVector& vAux)
 {
 	intVector	insertOrder = this->getInsertOrder(vAux.size());
-	//size_t		upperBound = 3;
+	size_t		jacobsthalNumCount = 1;
+	size_t		upperBound;
 
 	for (size_t i = 0; i < insertOrder.size(); i++)
 	{
+		if (insertOrder[i] > insertOrder[i - 1])
+		{
+			upperBound = pow(2, ++jacobsthalNumCount) - 1;
+			if (upperBound > v.size())
+				upperBound = v.size();
+		}
 		int					value = vAux[insertOrder[i]];
-		intVector::iterator	insertIt = this->vBinarySearch(v, v.size() - 1, value); // cambiar
+		intVector::iterator	insertIt = this->vBinarySearch(v, upperBound - 1, value); // cambiar
 
 		v.insert(insertIt, value);
 	}

@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <ctime>
 #include <iomanip>
+#include <math.h>
 
 class	PmergeMe
 {
