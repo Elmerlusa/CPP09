@@ -56,6 +56,18 @@ const double&	PmergeMe::getDTime(void) const
 	return this->_dTime;
 }
 
+void	PmergeMe::vSort(char *cSeq[], const int& size)
+{
+	struct timespec	begin, end;
+
+	clock_gettime(CLOCK_REALTIME, &begin);
+	this->_v.reserve(size);
+	this->parseArgsToV(cSeq, size);
+	this->vFordJohnsonSortAlgorithm(this->_v);
+	clock_gettime(CLOCK_REALTIME, &end);
+	this->_vTime = (end.tv_sec - begin.tv_sec) * 1e+3 + (end.tv_nsec - begin.tv_nsec) * 1e-6;
+}
+
 void	PmergeMe::parseArgsToV(char *cSeq[], const int& size)
 {
 	std::vector<std::string>	seq(cSeq, cSeq + size);
@@ -71,32 +83,88 @@ void	PmergeMe::parseArgsToV(char *cSeq[], const int& size)
 	}
 }
 
-void	PmergeMe::vSort(char *cSeq[], const int& size)
+void	PmergeMe::vFordJohnsonSortAlgorithm(std::vector<int>& v)
 {
-	struct timespec	begin, end;
+	vectorIntVector	pairs;
+	std::vector<int>				vAux;
 
-	this->getInsertOrder(25);
-	clock_gettime(CLOCK_REALTIME, &begin);
-	this->_v.reserve(size);
-	this->parseArgsToV(cSeq, size);
-	this->vFordJohnsonSortAlgorithm(this->_v);
-	clock_gettime(CLOCK_REALTIME, &end);
-	this->_vTime = (end.tv_sec - begin.tv_sec) * 1e+3 + (end.tv_nsec - begin.tv_nsec) * 1e-6;
+	this->vCreateAndSortPairs(v, pairs);
+	this->vGroupLargestAndShortestValues(pairs, v, vAux);
+	v.insert(v.begin(), vAux[0]);
+	this->vInsertShortestValues(v, vAux);
 }
 
-int	PmergeMe::getJacobsthalNum(const size_t& n)
+void	PmergeMe::vCreateAndSortPairs(std::vector<int>& v, vectorIntVector& pairs)
 {
-	if (n == 0 || n == 1)
-		return n;
-	return this->getJacobsthalNum(n - 1) + 2 * getJacobsthalNum(n - 2);
+	pairs.reserve(v.size() / 2);
+	for (std::vector<int>::iterator it = v.begin(); it < v.end() - 1; std::advance(it, 2))
+		pairs.push_back(std::vector<int>(it, it + 2));
+	for (vectorIntVector::iterator it = pairs.begin(); it < pairs.end(); it++)
+	{
+		if ((*it)[0] < (*it)[1]) // swap
+		{
+			int	tmp = (*it)[0];
+
+			(*it)[0] = (*it)[1];
+			(*it)[1] = tmp;
+		}
+	}
+	this->vRecursiveInsertionSort(pairs, pairs.size());
+}
+
+void	PmergeMe::vRecursiveInsertionSort(vectorIntVector& v, const size_t& n)
+{
+	intVector	last;
+	int					index;
+
+	if (n <= 1)
+		return;
+	this->vRecursiveInsertionSort(v, n - 1);
+	last = v[n - 1];
+	index = n - 2;
+	while (index >= 0 && v[index][0] > last[0])
+	{
+		v[index + 1] = v[index];
+		index--;
+	}
+	v[index + 1] = last;
+}
+
+void	PmergeMe::vGroupLargestAndShortestValues(vectorIntVector& pairs, intVector& largestV, intVector& shortestV)
+{
+	bool	oddSize = (largestV.size() % 2) == 1;
+	int		lastValue = largestV.back();
+
+	largestV.clear();
+	for (vectorIntVector::iterator it = pairs.begin(); it < pairs.end(); it++)
+	{
+		largestV.push_back((*it)[0]);
+		shortestV.push_back((*it)[1]);
+	}
+	if (oddSize)
+		shortestV.push_back(lastValue);
+}
+
+void	PmergeMe::vInsertShortestValues(intVector& v, intVector& vAux)
+{
+	intVector	insertOrder = this->getInsertOrder(vAux.size());
+	//size_t		upperBound = 3;
+
+	for (size_t i = 0; i < insertOrder.size(); i++)
+	{
+		int					value = vAux[insertOrder[i]];
+		intVector::iterator	insertIt = this->vBinarySearch(v, v.size() - 1, value); // cambiar
+
+		v.insert(insertIt, value);
+	}
 }
 
 std::vector<int>	PmergeMe::getInsertOrder(const size_t& size)
 {
-	std::vector<int>	indexes;
-	size_t					i = 3;
-	size_t					lastJacobsthalNum = this->getJacobsthalNum(i - 1);
-	size_t					num = this->getJacobsthalNum(i);
+	intVector	indexes;
+	size_t		i = 3;
+	size_t		lastJacobsthalNum = this->getJacobsthalNum(i - 1);
+	size_t		num = this->getJacobsthalNum(i);
 
 	indexes.reserve(size);
 	while (num < size)
@@ -114,54 +182,9 @@ std::vector<int>	PmergeMe::getInsertOrder(const size_t& size)
 	return indexes;
 }
 
-void	PmergeMe::swap(std::vector<int>& v, const size_t& i1, const size_t& i2)
-{
-	int	tmp;
-
-	if (i1 == i2)
-		return;
-	tmp = v[i1];
-	v[i1] = v[i2];
-	v[i2] = tmp;
-}
-
-void	PmergeMe::vRecursiveInsertionSort(std::vector< std::vector<int> >& v, int n)
-{
-	if (n <= 1)
-		return;
-	this->vRecursiveInsertionSort(v, n - 1);
-
-	std::vector<int>	last = v[n - 1];
-	int					index = n - 2;
-
-	while (index >= 0 && v[index][0] > last[0])
-	{
-		v[index + 1] = v[index];
-		index--;
-	}
-	v[index + 1] = last;
-}
-
-std::vector< std::vector<int> >	PmergeMe::vCreateAndSortPairs(std::vector<int>& v)
-{
-	std::vector< std::vector<int> >	pairs;
-
-	pairs.reserve(v.size() / 2);
-	for (std::vector<int>::iterator it = v.begin(); it < v.end() - 1; std::advance(it, 2))
-		pairs.push_back(std::vector<int>(it, it + 2));
-	for (std::vector< std::vector<int> >::iterator it = pairs.begin(); it < pairs.end(); it++)
-	{
-		if ((*it)[0] < (*it)[1])
-			this->swap(*it, 0, 1);
-	}
-	this->vRecursiveInsertionSort(pairs, pairs.size());
-	return pairs;
-}
-
-std::vector<int>::iterator	binarySearch(std::vector<int>& v, size_t upperBound, int value)
+std::vector<int>::iterator	PmergeMe::vBinarySearch(intVector& v, int end, const int& value)
 {
 	int	begin = 0;
-	int	end = upperBound;
 
 	while (end - begin > 0)
 	{
@@ -175,33 +198,7 @@ std::vector<int>::iterator	binarySearch(std::vector<int>& v, size_t upperBound, 
 		else
 			begin = mid + 1;
 	}
-	return v.begin() + begin - (value < v[begin] ? 1 : 0);
-}
-
-void	PmergeMe::vFordJohnsonSortAlgorithm(std::vector<int>& v)
-{
-	std::vector< std::vector<int> >	pairs = this->vCreateAndSortPairs(v);
-	std::vector<int>				vAux;
-	bool							oddSize = (v.size() % 2) == 1;
-	int								lastValue = v.back();
-
-	v.clear();
-	for (std::vector< std::vector<int> >::iterator it = pairs.begin(); it < pairs.end(); it++)
-	{
-		v.push_back((*it)[0]);
-		vAux.push_back((*it)[1]);
-	}
-	if (oddSize)
-		vAux.push_back(lastValue);
-	v.insert(v.begin(), vAux[0]);
-	std::vector<int>	insertOrder = this->getInsertOrder(vAux.size());
-	//int	upperBound = 3;
-	for (size_t i = 0; i < insertOrder.size(); i++)
-	{
-		std::vector<int>::iterator	insertIt = binarySearch(v, v.size() - 1, vAux[insertOrder[i]]) + 1;
-
-		v.insert(insertIt, vAux[insertOrder[i]]);
-	}
+	return v.begin() + begin + (value < v[begin] ? 0 : 1);
 }
 
 void	PmergeMe::dSort(char *cSeq[], const int& size)
@@ -284,10 +281,17 @@ void	PmergeMe::printResults(char **cSeq)
 	for (size_t i = 0; cSeq[i]; i++)
 		std::cout << cSeq[i] << " ";
 	std::cout << "\nAfter:\t";
-	for (std::vector<int>::iterator it = this->_v.begin(); it != this->_v.end(); it++)
+	for (intVector::iterator it = this->_v.begin(); it != this->_v.end(); it++)
 		std::cout << *it << " ";
 	std::cout << "\nTime to process a range of " << this->_v.size() << " elements with std::vector<int>:\t" << this->_vTime << " ms\n";
 	std::cout << "Time to process a range of " << this->_d.size() << " elements with std::deque<int>:\t" << this->_dTime << " ms\n";
+}
+
+int	PmergeMe::getJacobsthalNum(const size_t& n)
+{
+	if (n == 0 || n == 1)
+		return n;
+	return this->getJacobsthalNum(n - 1) + 2 * getJacobsthalNum(n - 2);
 }
 
 PmergeMe&	PmergeMe::operator=(const PmergeMe& pmergeMe)

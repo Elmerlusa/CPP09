@@ -28,6 +28,9 @@ class	PmergeMe
 		std::deque<int>		_d;
 		double				_dTime;
 
+		typedef typename std::vector<int>					intVector;
+		typedef typename std::vector< std::vector<int> >	vectorIntVector;
+
 		PmergeMe(void);
 		PmergeMe(const PmergeMe& pmergeMe);
 
@@ -38,14 +41,15 @@ class	PmergeMe
 		const std::deque<int>&	getD(void) const;
 		const double&			getDTime(void) const;
 
-		void	parseArgsToV(char *cSeq[], const int& size);
 		void	vSort(char *cSeq[], const int& size);
-		void	swap(std::vector<int>& v, const size_t& i1, const size_t& i2);
-		std::vector<int>	vGroupLargestAndShortestValues(std::vector<int>& v, std::vector< std::vector<int> > &pairs);
-		void	insertShortestValues(std::vector<int>& v, const std::vector<int>& vAux);
-		std::vector< std::vector<int> >	vCreateAndSortPairs(std::vector<int>& v);
-		void	vRecursiveInsertionSort(std::vector< std::vector<int> >& v, int n);
-		void	vFordJohnsonSortAlgorithm(std::vector<int>& v);
+		void	parseArgsToV(char *cSeq[], const int& size);
+		void	vFordJohnsonSortAlgorithm(intVector& v);
+		void	vCreateAndSortPairs(intVector& v, vectorIntVector& pairs);
+		void	vGroupLargestAndShortestValues(vectorIntVector& pairs, intVector& largestV, intVector& shortestV);
+		void	vRecursiveInsertionSort(vectorIntVector& v, const size_t& n);
+		void	vInsertShortestValues(intVector& v, intVector& vAux);
+		intVector	getInsertOrder(const size_t& size);
+		intVector::iterator	vBinarySearch(intVector& v, int end, const int& value);
 
 		void	parseArgsToD(char *cSeq[], const int& size);
 		void	dSort(char *cSeq[], const int& size);
@@ -54,8 +58,7 @@ class	PmergeMe
 
 		void	printResults(char **cSeq);
 
-		int		getJacobsthalNum(const size_t& n);
-		std::vector<int>	getInsertOrder(const size_t& size);
+		int					getJacobsthalNum(const size_t& n);
 
 		template<class InputIt> bool	isSorted(InputIt begin, InputIt end)
 		{
