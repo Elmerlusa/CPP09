@@ -64,6 +64,8 @@ void	BitcoinExchange::readRateFilename(void)
 
 		this->validateRateDBLine(line);
 		sep = line.find(',');
+		if (this->_dateAndRateMap.find(line.substr(0, sep)) != this->_dateAndRateMap.end())
+			throw std::runtime_error(this->_rateFilename + ": " + line.substr(0, sep) + " duplicated");
 		this->_dateAndRateMap.insert(std::pair<std::string, float>(line.substr(0, sep), atof(line.substr(sep + 1).c_str())));
 	}
 	if (this->_dateAndRateMap.size() == 0)
