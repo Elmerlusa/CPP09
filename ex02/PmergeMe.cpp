@@ -83,10 +83,10 @@ void	PmergeMe::parseArgsToV(char *cSeq[], const int& size)
 	}
 }
 
-void	PmergeMe::vFordJohnsonSortAlgorithm(std::vector<int>& v)
+void	PmergeMe::vFordJohnsonSortAlgorithm(intVector& v)
 {
 	vectorIntVector	pairs;
-	std::vector<int>				vAux;
+	intVector		vAux;
 
 	this->vCreateAndSortPairs(v, pairs);
 	this->vGroupLargestAndShortestValues(pairs, v, vAux);
@@ -94,11 +94,11 @@ void	PmergeMe::vFordJohnsonSortAlgorithm(std::vector<int>& v)
 	this->vInsertShortestValues(v, vAux);
 }
 
-void	PmergeMe::vCreateAndSortPairs(std::vector<int>& v, vectorIntVector& pairs)
+void	PmergeMe::vCreateAndSortPairs(intVector& v, vectorIntVector& pairs)
 {
 	pairs.reserve(v.size() / 2);
-	for (std::vector<int>::iterator it = v.begin(); it < v.end() - 1; std::advance(it, 2))
-		pairs.push_back(std::vector<int>(it, it + 2));
+	for (intVector::iterator it = v.begin(); it < v.end() - 1; std::advance(it, 2))
+		pairs.push_back(intVector(it, it + 2));
 	for (vectorIntVector::iterator it = pairs.begin(); it < pairs.end(); it++)
 	{
 		if ((*it)[0] < (*it)[1]) // swap
@@ -147,26 +147,27 @@ void	PmergeMe::vGroupLargestAndShortestValues(vectorIntVector& pairs, intVector&
 
 void	PmergeMe::vInsertShortestValues(intVector& v, intVector& vAux)
 {
-	intVector	insertOrder = this->getInsertOrder(vAux.size());
+	intVector	insertOrder = this->vGetInsertOrder(vAux.size());
 	size_t		jacobsthalNumCount = 1;
 	size_t		upperBound;
 
 	for (size_t i = 0; i < insertOrder.size(); i++)
 	{
-		if (insertOrder[i] > insertOrder[i - 1])
+		int					value = vAux[insertOrder[i]];
+		intVector::iterator	insertIt;
+
+		if (i == 0 || insertOrder[i] > insertOrder[i - 1])
 		{
 			upperBound = pow(2, ++jacobsthalNumCount) - 1;
 			if (upperBound > v.size())
 				upperBound = v.size();
 		}
-		int					value = vAux[insertOrder[i]];
-		intVector::iterator	insertIt = this->vBinarySearch(v, upperBound - 1, value); // cambiar
-
+		insertIt = this->vBinarySearch(v, upperBound - 1, value);
 		v.insert(insertIt, value);
 	}
 }
 
-std::vector<int>	PmergeMe::getInsertOrder(const size_t& size)
+std::vector<int>	PmergeMe::vGetInsertOrder(const size_t& size)
 {
 	intVector	indexes;
 	size_t		i = 3;
@@ -214,7 +215,7 @@ void	PmergeMe::dSort(char *cSeq[], const int& size)
 
 	clock_gettime(CLOCK_REALTIME, &begin);
 	this->parseArgsToD(cSeq, size);
-	this->dMergeSort(this->_d, 0, this->_d.size() - 1);
+	this->dFordJohnsonSortAlgorithm(this->_d);
 	clock_gettime(CLOCK_REALTIME, &end);
 	this->_dTime = (end.tv_sec - begin.tv_sec) * 1e+3 + (end.tv_nsec - begin.tv_nsec) * 1e-6;
 }
@@ -234,52 +235,128 @@ void	PmergeMe::parseArgsToD(char *cSeq[], const int& size)
 	}
 }
 
-void	PmergeMe::dInsertionSort(std::deque<int>& d, const size_t& begin, const size_t& end)
+void	PmergeMe::dFordJohnsonSortAlgorithm(intDeque& d)
 {
-	int		tmp;
+	dequeIntDeque	pairs;
+	intDeque		dAux;
 
-	if (begin == end)
-		return ;
-	for (size_t i = begin; i <= end - 1; i++)
+	this->dCreateAndSortPairs(d, pairs);
+	this->dGroupLargestAndShortestValues(pairs, d, dAux);
+	d.insert(d.begin(), dAux[0]);
+	this->dInsertShortestValues(d, dAux);
+}
+
+void	PmergeMe::dCreateAndSortPairs(intDeque& d, dequeIntDeque& pairs)
+{
+	for (intDeque::iterator it = d.begin(); it < d.end() - 1; std::advance(it, 2))
+		pairs.push_back(intDeque(it, it + 2));
+	for (dequeIntDeque::iterator it = pairs.begin(); it < pairs.end(); it++)
 	{
-		if (d[i] > d[i + 1])
+		if ((*it)[0] < (*it)[1]) // swap
 		{
-			tmp = d[i + 1];
-			d[i + 1] = d[i];
-			d[i] = tmp;
+			int	tmp = (*it)[0];
+
+			(*it)[0] = (*it)[1];
+			(*it)[1] = tmp;
 		}
+	}
+	this->dRecursiveInsertionSort(pairs, pairs.size());
+}
+
+void	PmergeMe::dRecursiveInsertionSort(dequeIntDeque& d, const size_t& n)
+{
+	intDeque	last;
+	int			index;
+
+	if (n <= 1)
+		return;
+	this->dRecursiveInsertionSort(d, n - 1);
+	last = d[n - 1];
+	index = n - 2;
+	while (index >= 0 && d[index][0] > last[0])
+	{
+		d[index + 1] = d[index];
+		index--;
+	}
+	d[index + 1] = last;
+}
+
+void	PmergeMe::dGroupLargestAndShortestValues(dequeIntDeque& pairs, intDeque& largestD, intDeque& shortestD)
+{
+	bool	oddSize = (largestD.size() % 2) == 1;
+	int		lastValue = largestD.back();
+
+	largestD.clear();
+	for (dequeIntDeque::iterator it = pairs.begin(); it < pairs.end(); it++)
+	{
+		largestD.push_back((*it)[0]);
+		shortestD.push_back((*it)[1]);
+	}
+	if (oddSize)
+		shortestD.push_back(lastValue);
+}
+
+void	PmergeMe::dInsertShortestValues(intDeque& d, intDeque& dAux)
+{
+	intDeque	insertOrder = this->dGetInsertOrder(dAux.size());
+	size_t		jacobsthalNumCount = 1;
+	size_t		upperBound;
+
+	for (size_t i = 0; i < insertOrder.size(); i++)
+	{
+		int					value = dAux[insertOrder[i]];
+		intDeque::iterator	insertIt;
+
+		if (i == 0 || insertOrder[i] > insertOrder[i - 1])
+		{
+			upperBound = pow(2, ++jacobsthalNumCount) - 1;
+			if (upperBound > d.size())
+				upperBound = d.size();
+		}
+		insertIt = this->dBinarySearch(d, upperBound - 1, value);
+		d.insert(insertIt, value);
 	}
 }
 
-void	PmergeMe::dMergeSort(std::deque<int>& d, const size_t& begin, const size_t& end)
+std::deque<int>	PmergeMe::dGetInsertOrder(const size_t& size)
 {
-	if (end - begin <= 1)
-		this->dInsertionSort(d, begin, end);
-	else
+	intDeque	indexes;
+	size_t		i = 3;
+	size_t		lastJacobsthalNum = this->getJacobsthalNum(i - 1);
+	size_t		num = this->getJacobsthalNum(i);
+
+	while (num < size)
 	{
-		size_t	mid = (begin + end) / 2;
-
-		this->dMergeSort(d, begin, mid);
-		this->dMergeSort(d, mid + 1, end);
-
-		std::deque<int>	aux(d);
-		size_t			i1 = begin;
-		size_t			i2 = mid + 1;
-
-		for (size_t i = begin; i <= end; i++)
-		{
-			if (i1 <= mid && (i2 > end || aux[i1] < aux[i2]))
-			{
-				d[i] = aux[i1];
-				i1++;
-			}
-			else
-			{
-				d[i] = aux[i2];
-				i2++;
-			}
-		}
+		for (size_t i = 0; i < num - lastJacobsthalNum; i++)
+			indexes.push_back(num - i - 1);
+		lastJacobsthalNum = num;
+		num = this->getJacobsthalNum(++i);
 	}
+	if (std::find(indexes.begin(), indexes.end(), size - 1) == indexes.end())
+	{
+		for (size_t i = 0; i < size - lastJacobsthalNum; i++)
+			indexes.push_back(size - i - 1);
+	}
+	return indexes;
+}
+
+std::deque<int>::iterator	PmergeMe::dBinarySearch(std::deque<int>& d, int end, const int& value)
+{
+	int	begin = 0;
+
+	while (end - begin > 0)
+	{
+		int	midDistance = (end - begin) / 2;
+		int	mid = begin + midDistance;
+
+		if (value == d[mid])
+			return d.begin() + midDistance;
+		else if (value < d[mid])
+			end = mid - 1;
+		else
+			begin = mid + 1;
+	}
+	return d.begin() + begin + (value < d[begin] ? 0 : 1);
 }
 
 void	PmergeMe::printResults(char **cSeq)

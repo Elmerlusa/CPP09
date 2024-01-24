@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <ctime>
 #include <iomanip>
-#include <math.h>
+#include <cmath>
 
 class	PmergeMe
 {
@@ -31,6 +31,8 @@ class	PmergeMe
 
 		typedef typename std::vector<int>					intVector;
 		typedef typename std::vector< std::vector<int> >	vectorIntVector;
+		typedef typename std::deque<int>					intDeque;
+		typedef typename std::deque< std::deque<int> >		dequeIntDeque;
 
 		PmergeMe(void);
 		PmergeMe(const PmergeMe& pmergeMe);
@@ -49,13 +51,18 @@ class	PmergeMe
 		void	vGroupLargestAndShortestValues(vectorIntVector& pairs, intVector& largestV, intVector& shortestV);
 		void	vRecursiveInsertionSort(vectorIntVector& v, const size_t& n);
 		void	vInsertShortestValues(intVector& v, intVector& vAux);
-		intVector	getInsertOrder(const size_t& size);
+		intVector	vGetInsertOrder(const size_t& size);
 		intVector::iterator	vBinarySearch(intVector& v, int end, const int& value);
 
-		void	parseArgsToD(char *cSeq[], const int& size);
 		void	dSort(char *cSeq[], const int& size);
-		void	dInsertionSort(std::deque<int>& d, const size_t& begin, const size_t& end);
-		void	dMergeSort(std::deque<int>& d, const size_t& begin, const size_t& end);
+		void	parseArgsToD(char *cSeq[], const int& size);
+		void	dFordJohnsonSortAlgorithm(intDeque& d);
+		void	dCreateAndSortPairs(intDeque& d, dequeIntDeque& pairs);
+		void	dGroupLargestAndShortestValues(dequeIntDeque& pairs, intDeque& largestD, intDeque& shortestD);
+		void	dRecursiveInsertionSort(dequeIntDeque& d, const size_t& n);
+		void	dInsertShortestValues(intDeque& d, intDeque& dAux);
+		intDeque	dGetInsertOrder(const size_t& size);
+		intDeque::iterator	dBinarySearch(intDeque& d, int end, const int& value);
 
 		void	printResults(char **cSeq);
 
