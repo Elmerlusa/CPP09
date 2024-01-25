@@ -83,10 +83,10 @@ void	PmergeMe::parseArgsToV(char *cSeq[], const int& size)
 	}
 }
 
-void	PmergeMe::vFordJohnsonSortAlgorithm(intVector& v)
+void	PmergeMe::vFordJohnsonSortAlgorithm(std::vector<int>& v)
 {
-	vectorIntVector	pairs;
-	intVector		vAux;
+	std::vector< std::vector<int> >	pairs;
+	std::vector<int>		vAux;
 
 	this->vCreateAndSortPairs(v, pairs);
 	this->vGroupLargestAndShortestValues(pairs, v, vAux);
@@ -94,12 +94,12 @@ void	PmergeMe::vFordJohnsonSortAlgorithm(intVector& v)
 	this->vInsertShortestValues(v, vAux);
 }
 
-void	PmergeMe::vCreateAndSortPairs(intVector& v, vectorIntVector& pairs)
+void	PmergeMe::vCreateAndSortPairs(std::vector<int>& v, std::vector< std::vector<int> >& pairs)
 {
 	pairs.reserve(v.size() / 2);
-	for (intVector::iterator it = v.begin(); it < v.end() - 1; std::advance(it, 2))
-		pairs.push_back(intVector(it, it + 2));
-	for (vectorIntVector::iterator it = pairs.begin(); it < pairs.end(); it++)
+	for (std::vector<int>::iterator it = v.begin(); it < v.end() - 1; std::advance(it, 2))
+		pairs.push_back(std::vector<int>(it, it + 2));
+	for (std::vector< std::vector<int> >::iterator it = pairs.begin(); it < pairs.end(); it++)
 	{
 		if ((*it)[0] < (*it)[1]) // swap
 		{
@@ -112,9 +112,9 @@ void	PmergeMe::vCreateAndSortPairs(intVector& v, vectorIntVector& pairs)
 	this->vRecursiveInsertionSort(pairs, pairs.size());
 }
 
-void	PmergeMe::vRecursiveInsertionSort(vectorIntVector& v, const size_t& n)
+void	PmergeMe::vRecursiveInsertionSort(std::vector< std::vector<int> >& v, const size_t& n)
 {
-	intVector	last;
+	std::vector<int>	last;
 	int					index;
 
 	if (n <= 1)
@@ -130,13 +130,13 @@ void	PmergeMe::vRecursiveInsertionSort(vectorIntVector& v, const size_t& n)
 	v[index + 1] = last;
 }
 
-void	PmergeMe::vGroupLargestAndShortestValues(vectorIntVector& pairs, intVector& largestV, intVector& shortestV)
+void	PmergeMe::vGroupLargestAndShortestValues(std::vector< std::vector<int> >& pairs, std::vector<int>& largestV, std::vector<int>& shortestV)
 {
 	bool	oddSize = (largestV.size() % 2) == 1;
 	int		lastValue = largestV.back();
 
 	largestV.clear();
-	for (vectorIntVector::iterator it = pairs.begin(); it < pairs.end(); it++)
+	for (std::vector< std::vector<int> >::iterator it = pairs.begin(); it < pairs.end(); it++)
 	{
 		largestV.push_back((*it)[0]);
 		shortestV.push_back((*it)[1]);
@@ -145,16 +145,16 @@ void	PmergeMe::vGroupLargestAndShortestValues(vectorIntVector& pairs, intVector&
 		shortestV.push_back(lastValue);
 }
 
-void	PmergeMe::vInsertShortestValues(intVector& v, intVector& vAux)
+void	PmergeMe::vInsertShortestValues(std::vector<int>& v, std::vector<int>& vAux)
 {
-	intVector	insertOrder = this->vGetInsertOrder(vAux.size());
+	std::vector<int>	insertOrder = this->vGetInsertOrder(vAux.size());
 	size_t		jacobsthalNumCount = 1;
 	size_t		upperBound;
 
 	for (size_t i = 0; i < insertOrder.size(); i++)
 	{
 		int					value = vAux[insertOrder[i]];
-		intVector::iterator	insertIt;
+		std::vector<int>::iterator	insertIt;
 
 		if (i == 0 || insertOrder[i] > insertOrder[i - 1])
 		{
@@ -169,7 +169,7 @@ void	PmergeMe::vInsertShortestValues(intVector& v, intVector& vAux)
 
 std::vector<int>	PmergeMe::vGetInsertOrder(const size_t& size)
 {
-	intVector	indexes;
+	std::vector<int>	indexes;
 	size_t		i = 3;
 	size_t		lastJacobsthalNum = this->getJacobsthalNum(i - 1);
 	size_t		num = this->getJacobsthalNum(i);
@@ -190,7 +190,7 @@ std::vector<int>	PmergeMe::vGetInsertOrder(const size_t& size)
 	return indexes;
 }
 
-std::vector<int>::iterator	PmergeMe::vBinarySearch(intVector& v, int end, const int& value)
+std::vector<int>::iterator	PmergeMe::vBinarySearch(std::vector<int>& v, int end, const int& value)
 {
 	int	begin = 0;
 
@@ -200,7 +200,7 @@ std::vector<int>::iterator	PmergeMe::vBinarySearch(intVector& v, int end, const 
 		int	mid = begin + midDistance;
 
 		if (value == v[mid])
-			return v.begin() + midDistance;
+			return v.begin() + mid;
 		else if (value < v[mid])
 			end = mid - 1;
 		else
@@ -235,10 +235,10 @@ void	PmergeMe::parseArgsToD(char *cSeq[], const int& size)
 	}
 }
 
-void	PmergeMe::dFordJohnsonSortAlgorithm(intDeque& d)
+void	PmergeMe::dFordJohnsonSortAlgorithm(std::deque<int>& d)
 {
-	dequeIntDeque	pairs;
-	intDeque		dAux;
+	std::deque< std::deque<int> >	pairs;
+	std::deque<int>		dAux;
 
 	this->dCreateAndSortPairs(d, pairs);
 	this->dGroupLargestAndShortestValues(pairs, d, dAux);
@@ -246,11 +246,11 @@ void	PmergeMe::dFordJohnsonSortAlgorithm(intDeque& d)
 	this->dInsertShortestValues(d, dAux);
 }
 
-void	PmergeMe::dCreateAndSortPairs(intDeque& d, dequeIntDeque& pairs)
+void	PmergeMe::dCreateAndSortPairs(std::deque<int>& d, std::deque< std::deque<int> >& pairs)
 {
-	for (intDeque::iterator it = d.begin(); it < d.end() - 1; std::advance(it, 2))
-		pairs.push_back(intDeque(it, it + 2));
-	for (dequeIntDeque::iterator it = pairs.begin(); it < pairs.end(); it++)
+	for (std::deque<int>::iterator it = d.begin(); it < d.end() - 1; std::advance(it, 2))
+		pairs.push_back(std::deque<int>(it, it + 2));
+	for (std::deque< std::deque<int> >::iterator it = pairs.begin(); it < pairs.end(); it++)
 	{
 		if ((*it)[0] < (*it)[1]) // swap
 		{
@@ -263,9 +263,9 @@ void	PmergeMe::dCreateAndSortPairs(intDeque& d, dequeIntDeque& pairs)
 	this->dRecursiveInsertionSort(pairs, pairs.size());
 }
 
-void	PmergeMe::dRecursiveInsertionSort(dequeIntDeque& d, const size_t& n)
+void	PmergeMe::dRecursiveInsertionSort(std::deque< std::deque<int> >& d, const size_t& n)
 {
-	intDeque	last;
+	std::deque<int>	last;
 	int			index;
 
 	if (n <= 1)
@@ -281,13 +281,13 @@ void	PmergeMe::dRecursiveInsertionSort(dequeIntDeque& d, const size_t& n)
 	d[index + 1] = last;
 }
 
-void	PmergeMe::dGroupLargestAndShortestValues(dequeIntDeque& pairs, intDeque& largestD, intDeque& shortestD)
+void	PmergeMe::dGroupLargestAndShortestValues(std::deque< std::deque<int> >& pairs, std::deque<int>& largestD, std::deque<int>& shortestD)
 {
 	bool	oddSize = (largestD.size() % 2) == 1;
 	int		lastValue = largestD.back();
 
 	largestD.clear();
-	for (dequeIntDeque::iterator it = pairs.begin(); it < pairs.end(); it++)
+	for (std::deque< std::deque<int> >::iterator it = pairs.begin(); it < pairs.end(); it++)
 	{
 		largestD.push_back((*it)[0]);
 		shortestD.push_back((*it)[1]);
@@ -296,16 +296,16 @@ void	PmergeMe::dGroupLargestAndShortestValues(dequeIntDeque& pairs, intDeque& la
 		shortestD.push_back(lastValue);
 }
 
-void	PmergeMe::dInsertShortestValues(intDeque& d, intDeque& dAux)
+void	PmergeMe::dInsertShortestValues(std::deque<int>& d, std::deque<int>& dAux)
 {
-	intDeque	insertOrder = this->dGetInsertOrder(dAux.size());
+	std::deque<int>	insertOrder = this->dGetInsertOrder(dAux.size());
 	size_t		jacobsthalNumCount = 1;
 	size_t		upperBound;
 
 	for (size_t i = 0; i < insertOrder.size(); i++)
 	{
 		int					value = dAux[insertOrder[i]];
-		intDeque::iterator	insertIt;
+		std::deque<int>::iterator	insertIt;
 
 		if (i == 0 || insertOrder[i] > insertOrder[i - 1])
 		{
@@ -320,7 +320,7 @@ void	PmergeMe::dInsertShortestValues(intDeque& d, intDeque& dAux)
 
 std::deque<int>	PmergeMe::dGetInsertOrder(const size_t& size)
 {
-	intDeque	indexes;
+	std::deque<int>	indexes;
 	size_t		i = 3;
 	size_t		lastJacobsthalNum = this->getJacobsthalNum(i - 1);
 	size_t		num = this->getJacobsthalNum(i);
@@ -350,7 +350,7 @@ std::deque<int>::iterator	PmergeMe::dBinarySearch(std::deque<int>& d, int end, c
 		int	mid = begin + midDistance;
 
 		if (value == d[mid])
-			return d.begin() + midDistance;
+			return d.begin() + mid;
 		else if (value < d[mid])
 			end = mid - 1;
 		else
@@ -365,7 +365,7 @@ void	PmergeMe::printResults(char **cSeq)
 	for (size_t i = 0; cSeq[i]; i++)
 		std::cout << cSeq[i] << " ";
 	std::cout << "\nAfter:\t";
-	for (intVector::iterator it = this->_v.begin(); it != this->_v.end(); it++)
+	for (std::vector<int>::iterator it = this->_v.begin(); it != this->_v.end(); it++)
 		std::cout << *it << " ";
 	std::cout << "\nTime to process a range of " << this->_v.size() << " elements with std::vector<int>:\t" << this->_vTime << " ms\n";
 	std::cout << "Time to process a range of " << this->_d.size() << " elements with std::deque<int>:\t" << this->_dTime << " ms\n";

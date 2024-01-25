@@ -29,11 +29,6 @@ class	PmergeMe
 		std::deque<int>		_d;
 		double				_dTime;
 
-		typedef typename std::vector<int>					intVector;
-		typedef typename std::vector< std::vector<int> >	vectorIntVector;
-		typedef typename std::deque<int>					intDeque;
-		typedef typename std::deque< std::deque<int> >		dequeIntDeque;
-
 		PmergeMe(void);
 		PmergeMe(const PmergeMe& pmergeMe);
 
@@ -46,23 +41,23 @@ class	PmergeMe
 
 		void	vSort(char *cSeq[], const int& size);
 		void	parseArgsToV(char *cSeq[], const int& size);
-		void	vFordJohnsonSortAlgorithm(intVector& v);
-		void	vCreateAndSortPairs(intVector& v, vectorIntVector& pairs);
-		void	vGroupLargestAndShortestValues(vectorIntVector& pairs, intVector& largestV, intVector& shortestV);
-		void	vRecursiveInsertionSort(vectorIntVector& v, const size_t& n);
-		void	vInsertShortestValues(intVector& v, intVector& vAux);
-		intVector	vGetInsertOrder(const size_t& size);
-		intVector::iterator	vBinarySearch(intVector& v, int end, const int& value);
+		void	vFordJohnsonSortAlgorithm(std::vector<int>& v);
+		void	vCreateAndSortPairs(std::vector<int>& v, std::vector< std::vector<int> >& pairs);
+		void	vGroupLargestAndShortestValues(std::vector< std::vector<int> >& pairs, std::vector<int>& largestV, std::vector<int>& shortestV);
+		void	vRecursiveInsertionSort(std::vector< std::vector<int> >& v, const size_t& n);
+		void	vInsertShortestValues(std::vector<int>& v, std::vector<int>& vAux);
+		std::vector<int>	vGetInsertOrder(const size_t& size);
+		std::vector<int>::iterator	vBinarySearch(std::vector<int>& v, int end, const int& value);
 
 		void	dSort(char *cSeq[], const int& size);
 		void	parseArgsToD(char *cSeq[], const int& size);
-		void	dFordJohnsonSortAlgorithm(intDeque& d);
-		void	dCreateAndSortPairs(intDeque& d, dequeIntDeque& pairs);
-		void	dGroupLargestAndShortestValues(dequeIntDeque& pairs, intDeque& largestD, intDeque& shortestD);
-		void	dRecursiveInsertionSort(dequeIntDeque& d, const size_t& n);
-		void	dInsertShortestValues(intDeque& d, intDeque& dAux);
-		intDeque	dGetInsertOrder(const size_t& size);
-		intDeque::iterator	dBinarySearch(intDeque& d, int end, const int& value);
+		void	dFordJohnsonSortAlgorithm(std::deque<int>& d);
+		void	dCreateAndSortPairs(std::deque<int>& d, std::deque< std::deque<int> >& pairs);
+		void	dGroupLargestAndShortestValues(std::deque< std::deque<int> >& pairs, std::deque<int>& largestD, std::deque<int>& shortestD);
+		void	dRecursiveInsertionSort(std::deque< std::deque<int> >& d, const size_t& n);
+		void	dInsertShortestValues(std::deque<int>& d, std::deque<int>& dAux);
+		std::deque<int>	dGetInsertOrder(const size_t& size);
+		std::deque<int>::iterator	dBinarySearch(std::deque<int>& d, int end, const int& value);
 
 		void	printResults(char **cSeq);
 
